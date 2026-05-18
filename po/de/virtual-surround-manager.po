@@ -12,8 +12,8 @@ msgid "Manager"
 msgstr "Verwaltung"
 
 msgctxt "@page:title"
-msgid "Options"
-msgstr "Optionen"
+msgid "Quick Settings"
+msgstr "Schnelleinstellungen"
 
 msgctxt "@action"
 msgid "About Virtual Surround Sound"
@@ -34,6 +34,40 @@ msgstr "Ordner öffnen"
 msgctxt "@action"
 msgid "Reload"
 msgstr "Neu laden"
+
+# === Settings page ===
+
+msgctxt "@title:window"
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgctxt "@label:switch"
+msgid "Automatically start application on login"
+msgstr "Anwendung beim Anmelden automatisch starten"
+
+msgctxt "@label:switch"
+msgid "Automatically enable virtual surround sound"
+msgstr "Virtuellen Raumklang automatisch aktivieren"
+
+msgctxt "@label:combobox"
+msgid "Application behavior"
+msgstr "Anwendungsverhalten"
+
+msgctxt "@info:description"
+msgid "How the application should start and run."
+msgstr "Wie die Anwendung gestartet und ausgeführt werden soll."
+
+msgctxt "@option"
+msgid "Default"
+msgstr "Standard"
+
+msgctxt "@option"
+msgid "Show system tray icon"
+msgstr "Zeige Kontrollleistensymbol"
+
+msgctxt "@option"
+msgid "Show system tray icon & hide window"
+msgstr "Zeige Kontrollleistensymbol & verstecke Fenster"
 
 # === About page ===
 

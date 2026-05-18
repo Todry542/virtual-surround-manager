@@ -26,6 +26,13 @@ class FrontendManager : public QObject {
     // The user-selected index of the HRIR WAV file list
     Q_PROPERTY(int hrirWavFileNameIndex READ get_hrir_wav_file_name_index WRITE set_hrir_wav_file_name_index NOTIFY hrir_wav_file_name_index_changed)
 
+    // The selected startup setting
+    Q_PROPERTY(QString startupSetting READ get_startup_setting WRITE set_startup_setting NOTIFY startup_setting_changed)
+    // Whether autostart is enabled or not
+    Q_PROPERTY(bool autostartEnabled READ get_autostart_enabled WRITE set_autostart_enabled NOTIFY autostart_enabled_changed)
+    // Whether virtual surround sound is enabled automatically or not
+    Q_PROPERTY(bool virtualSurroundAutoEnabled READ get_virtual_surround_auto_enabled WRITE set_virtual_surround_auto_enabled NOTIFY virtual_surround_auto_enabled_changed)
+
   public:
     explicit FrontendManager(PipeWireManager *pipewire_manager, QObject *parent = nullptr);
 
@@ -48,7 +55,19 @@ class FrontendManager : public QObject {
     Q_INVOKABLE void load_hrir_wav_files();
 
     // Open folder in default file explorer
-    Q_INVOKABLE void openHrirWavFolder();
+    Q_INVOKABLE void open_hrir_wav_folder();
+
+    QString get_startup_setting() const;
+    void set_startup_setting(const QString &value);
+    Q_SIGNAL void startup_setting_changed();
+
+    bool get_autostart_enabled();
+    void set_autostart_enabled(bool value);
+    Q_SIGNAL void autostart_enabled_changed();
+
+    bool get_virtual_surround_auto_enabled();
+    void set_virtual_surround_auto_enabled(bool value);
+    Q_SIGNAL void virtual_surround_auto_enabled_changed();
 
   private:
     bool m_virtual_surround_enabled = false;
@@ -56,6 +75,9 @@ class FrontendManager : public QObject {
     QStringList m_hrir_wav_file_names;
     QStringList m_hrir_wav_file_paths;
     int m_hrir_wav_file_name_index = 0;
+    QString m_startup_setting = QStringLiteral("default");
+    bool m_autostart_enabled = false;
+    bool m_virtual_surround_auto_enabled = false;
 
     PipeWireManager *m_pipewire_manager;
 

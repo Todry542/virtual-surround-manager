@@ -1,5 +1,4 @@
 #include "frontend_manager.h"
-#include <qhashfunctions.h>
 
 FrontendManager::FrontendManager(PipeWireManager *pipewire_manager, QObject *parent) : QObject(parent) {
     m_pipewire_manager = pipewire_manager;
@@ -179,7 +178,7 @@ void FrontendManager::load_hrir_wav_files() {
     }
 }
 
-void FrontendManager::openHrirWavFolder() {
+void FrontendManager::open_hrir_wav_folder() {
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + hrir_wav_subpath;
 
     // Create user data path if not exists
@@ -188,4 +187,50 @@ void FrontendManager::openHrirWavFolder() {
         dir.mkpath(QStringLiteral("."));
 
     QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+}
+
+QString FrontendManager::get_startup_setting() const {
+    return m_startup_setting;
+}
+
+void FrontendManager::set_startup_setting(const QString &value) {
+    m_startup_setting = value;
+    // TODO:
+    Q_EMIT startup_setting_changed();
+}
+
+bool FrontendManager::get_autostart_enabled() {
+    return m_autostart_enabled;
+}
+
+void FrontendManager::set_autostart_enabled(bool value) {
+    if (m_autostart_enabled == value)
+        return;
+    m_autostart_enabled = value;
+
+    if (m_autostart_enabled) {
+        // TODO:
+    } else {
+        // TODO:
+    }
+
+    Q_EMIT autostart_enabled_changed();
+}
+
+bool FrontendManager::get_virtual_surround_auto_enabled() {
+    return m_virtual_surround_auto_enabled;
+}
+
+void FrontendManager::set_virtual_surround_auto_enabled(bool value) {
+    if (m_virtual_surround_auto_enabled == value)
+        return;
+    m_virtual_surround_auto_enabled = value;
+
+    if (m_virtual_surround_auto_enabled) {
+        // TODO:
+    } else {
+        // TODO:
+    }
+
+    Q_EMIT virtual_surround_auto_enabled_changed();
 }

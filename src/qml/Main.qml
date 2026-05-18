@@ -14,9 +14,28 @@ Kirigami.ApplicationWindow {
     height: 550
     title: i18nc("@title:window", "Manager")
 
+    // This loads the settings page
+    Component {
+        id: settingsPage
+        Settings {}
+    }
+    // This loads the about page
+    Component {
+        id: aboutPage
+
+        Kirigami.AboutPage {
+            aboutData: About
+        }
+    }
+
     globalDrawer: Kirigami.GlobalDrawer {
         isMenu: true
         actions: [
+            Kirigami.Action {
+                text: i18nc("@title:window", "Settings")
+                icon.name: "preferences-other"
+                onTriggered: pageStack.layers.push(settingsPage)
+            },
             Kirigami.Action {
                 text: i18nc("@action", "About Virtual Surround Sound")
                 icon.name: "help-about"
@@ -27,7 +46,7 @@ Kirigami.ApplicationWindow {
 
     pageStack.initialPage: Kirigami.Page {
         id: mainPage
-        title: i18nc("@page:title", "Options")
+        title: i18nc("@page:title", "Quick Settings")
         actions: [
             // Global toggle for enabling or disabling the virtual surround routing
             Kirigami.Action {
@@ -36,9 +55,7 @@ Kirigami.ApplicationWindow {
                 checkable: true
                 checked: frontendManager.virtualSurroundEnabled
                 enabled: frontendManager.hrirWavFileNames.length > 0
-                onToggled: {
-                    frontendManager.virtualSurroundEnabled = checked;
-                }
+                onToggled: frontendManager.virtualSurroundEnabled = checked
                 displayComponent: Controls.Switch {
                     action: toggleVirtualSurroundAction
                 }
@@ -61,9 +78,7 @@ Kirigami.ApplicationWindow {
             // Just used to group the radio buttons logically
             Controls.ButtonGroup {
                 id: hrirWavFileNamesGroup
-                onCheckedButtonChanged: {
-                    frontendManager.hrirWavFileNameIndex = buttons.indexOf(checkedButton);
-                }
+                onCheckedButtonChanged: frontendManager.hrirWavFileNameIndex = buttons.indexOf(checkedButton)
             }
 
             Kirigami.Card {
@@ -71,16 +86,12 @@ Kirigami.ApplicationWindow {
                     Kirigami.Action {
                         text: i18nc("@action", "Open folder")
                         icon.name: "folder-open"
-                        onTriggered: {
-                            frontendManager.openHrirWavFolder();
-                        }
+                        onTriggered: frontendManager.open_hrir_wav_folder()
                     },
                     Kirigami.Action {
                         text: i18nc("@action", "Reload")
                         icon.name: "object-rotate-right"
-                        onTriggered: {
-                            frontendManager.load_hrir_wav_files();
-                        }
+                        onTriggered: frontendManager.load_hrir_wav_files()
                     }
                 ]
                 Layout.fillHeight: true
@@ -114,20 +125,8 @@ Kirigami.ApplicationWindow {
             Kirigami.InlineMessage {
                 Layout.fillWidth: true
                 text: i18nc("@message", "<b>Using with EasyEffects</b><br>Exclude applications in EasyEffects that use 7.1 surround sound. Apply your effects on this program instead.")
-                onLinkActivated: function (link) {
-                    Qt.openUrlExternally(link);
-                }
                 visible: true
             }
-        }
-    }
-
-    // This loads the about page
-    Component {
-        id: aboutPage
-
-        Kirigami.AboutPage {
-            aboutData: About
         }
     }
 }
