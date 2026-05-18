@@ -34,7 +34,7 @@ class FrontendManager : public QObject {
     Q_PROPERTY(bool virtualSurroundAutoEnabled READ get_virtual_surround_auto_enabled WRITE set_virtual_surround_auto_enabled NOTIFY virtual_surround_auto_enabled_changed)
 
   public:
-    explicit FrontendManager(PipeWireManager *pipewire_manager, QObject *parent = nullptr);
+    explicit FrontendManager(PipeWireManager *pipewire_manager, KConfig *config, QObject *parent = nullptr);
 
     bool get_virtual_surround_enabled();
     void set_virtual_surround_enabled(bool value);
@@ -80,6 +80,7 @@ class FrontendManager : public QObject {
     bool m_virtual_surround_auto_enabled = false;
 
     PipeWireManager *m_pipewire_manager;
+    KConfig *m_config;
 
     QString hrir_wav_subpath = QStringLiteral("/hrir_wav");
 

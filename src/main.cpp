@@ -116,7 +116,8 @@ int main(int argc, char *argv[]) {
 
     // Create PipeWire and frontend manager
     PipeWireManager pipewire_manager;
-    FrontendManager *frontend_manager = new FrontendManager(&pipewire_manager);
+    KConfig config(QStringLiteral("virtual-surround-manager"));
+    FrontendManager *frontend_manager = new FrontendManager(&pipewire_manager, &config);
 
     // Add main page and supply context
     QQmlApplicationEngine engine;

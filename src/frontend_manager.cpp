@@ -1,7 +1,8 @@
 #include "frontend_manager.h"
 
-FrontendManager::FrontendManager(PipeWireManager *pipewire_manager, QObject *parent) : QObject(parent) {
+FrontendManager::FrontendManager(PipeWireManager *pipewire_manager, KConfig *config, QObject *parent) : QObject(parent) {
     m_pipewire_manager = pipewire_manager;
+    m_config = config;
     connect(m_pipewire_manager, &PipeWireManager::error_occured, this, &FrontendManager::set_error_message);
     load_hrir_wav_files();
 }
@@ -84,10 +85,9 @@ void FrontendManager::set_hrir_wav_file_name_index(int index) {
         m_pipewire_manager->enable_routing();
 
     // Write to config file
-    KConfig config(QStringLiteral("virtual-surround-manager"));
-    KConfigGroup group = config.group(QStringLiteral("Settings"));
+    KConfigGroup group = m_config->group(QStringLiteral("Settings"));
     group.writeEntry("hrir_wav_file_path", m_hrir_wav_file_paths.value(m_hrir_wav_file_name_index));
-    config.sync();
+    m_config->sync();
 
     Q_EMIT hrir_wav_file_name_index_changed();
 }
@@ -98,8 +98,7 @@ void FrontendManager::load_hrir_wav_files() {
 
     // Read from config file if nothing has been selected in current session
     if (old_path.isEmpty()) {
-        KConfig config(QStringLiteral("virtual-surround-manager"));
-        KConfigGroup group = config.group(QStringLiteral("Settings"));
+        KConfigGroup group = m_config->group(QStringLiteral("Settings"));
         old_path = group.readEntry("hrir_wav_file_path", QString());
     }
 
