@@ -35,11 +35,22 @@ void TrayIcon::setup(const QString &icon_name) {
     m_tray_icon->setIcon(QIcon::fromTheme(icon_name));
     m_tray_icon->setToolTip(i18nc("@title", "Virtual Surround Sound"));
     m_tray_icon->setContextMenu(m_menu);
-    m_tray_icon->show();
 }
 
 void TrayIcon::set_main_window(QQuickWindow *window) {
     m_main_window = window;
+}
+
+void TrayIcon::set_visibility(bool visible) {
+    if (visible) {
+        m_tray_icon->show();
+    } else {
+        m_tray_icon->hide();
+    }
+}
+
+bool TrayIcon::is_visible() {
+    return m_tray_icon->isVisible();
 }
 
 void TrayIcon::hide_main_window() {
@@ -89,6 +100,12 @@ void TrayIcon::update_ui_state() {
 }
 
 void TrayIcon::update_profile_menu() {
+    if (m_called_update_profile_menu) {
+        // Prevent calling twice and causing multible checkmarks.
+        m_called_update_profile_menu = false;
+        return;
+    }
+
     if (!m_frontend_manager || !m_profile_menu) {
         qWarning() << "TrayIcon::update_profile_menu - missing manager or menu";
         return;
@@ -97,6 +114,7 @@ void TrayIcon::update_profile_menu() {
     // Clear existing profile actions
     for (auto *action : m_profile_menu->actions()) {
         m_profile_menu->removeAction(action);
+        QObject::disconnect(action);
         delete action;
     }
 
@@ -113,10 +131,7 @@ void TrayIcon::update_profile_menu() {
         auto *action = m_profile_menu->addAction(profiles[i]);
         action->setCheckable(true);
         action->setData(i);
-        if (i == current_index) {
-            action->setChecked(true);
-            m_last_selected_profile = action;
-        }
+        action->setChecked(i == current_index);
         QObject::connect(action, &QAction::triggered, this, &TrayIcon::on_profile_selected);
     }
 }
@@ -132,11 +147,12 @@ void TrayIcon::on_profile_selected() {
         return;
     }
 
+    m_called_update_profile_menu = true;
+
     const int index = action->data().toInt();
     m_frontend_manager->set_hrir_wav_file_name_index(index);
 
     for (auto *a : m_profile_menu->actions()) {
         a->setChecked(a == action);
     }
-    m_last_selected_profile = action;
 }

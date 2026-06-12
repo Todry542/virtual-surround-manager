@@ -1,10 +1,29 @@
 #include "frontend_manager.h"
+#include <qhashfunctions.h>
 
 FrontendManager::FrontendManager(PipeWireManager *pipewire_manager, KConfig *config, QObject *parent) : QObject(parent) {
     m_pipewire_manager = pipewire_manager;
     m_config = config;
+    m_config_settings = m_config->group(QStringLiteral("Settings"));
     connect(m_pipewire_manager, &PipeWireManager::error_occured, this, &FrontendManager::set_error_message);
+
+    // Initialize UI values
+
     load_hrir_wav_files();
+
+    m_startup_ui = m_config_settings.readEntry("startup_ui", QString());
+    // Fallback for malformed config value
+    QStringList allowed_startup_ui_values = {QStringLiteral("showTray"), QStringLiteral("showTrayHideWindow"), QStringLiteral("hideTray")};
+    if (!allowed_startup_ui_values.contains(m_startup_ui))
+        m_startup_ui = QStringLiteral("showTray"); // Default value
+
+    m_autostart_enabled = m_config_settings.readEntry("autostart_enabled", bool());
+
+    m_virtual_surround_auto_enabled = m_config_settings.readEntry("virtual_surround_auto_enabled", bool());
+    if (m_virtual_surround_auto_enabled) {
+        // This line gets intentionally skipped if auto-enabling is disabled
+        set_virtual_surround_enabled(true);
+    }
 }
 
 bool FrontendManager::does_hrir_wav_file_exist(const QString &file_path) {
@@ -85,8 +104,7 @@ void FrontendManager::set_hrir_wav_file_name_index(int index) {
         m_pipewire_manager->enable_routing();
 
     // Write to config file
-    KConfigGroup group = m_config->group(QStringLiteral("Settings"));
-    group.writeEntry("hrir_wav_file_path", m_hrir_wav_file_paths.value(m_hrir_wav_file_name_index));
+    m_config_settings.writeEntry("hrir_wav_file_path", m_hrir_wav_file_paths.value(m_hrir_wav_file_name_index));
     m_config->sync();
 
     Q_EMIT hrir_wav_file_name_index_changed();
@@ -98,8 +116,7 @@ void FrontendManager::load_hrir_wav_files() {
 
     // Read from config file if nothing has been selected in current session
     if (old_path.isEmpty()) {
-        KConfigGroup group = m_config->group(QStringLiteral("Settings"));
-        old_path = group.readEntry("hrir_wav_file_path", QString());
+        old_path = m_config_settings.readEntry("hrir_wav_file_path", QString());
     }
 
     // Get all data directories, ordered by priority, first "~/.local/share/virtual-surround-manager", then "/usr/share/virtual-surround-manager"
@@ -188,14 +205,18 @@ void FrontendManager::open_hrir_wav_folder() {
     QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 }
 
-QString FrontendManager::get_startup_setting() const {
-    return m_startup_setting;
+QString FrontendManager::get_startup_ui() const {
+    return m_startup_ui;
 }
 
-void FrontendManager::set_startup_setting(const QString &value) {
-    m_startup_setting = value;
-    // TODO:
-    Q_EMIT startup_setting_changed();
+void FrontendManager::set_startup_ui(const QString &value) {
+    m_startup_ui = value;
+
+    // Write to config file
+    m_config_settings.writeEntry("startup_ui", m_startup_ui);
+    m_config->sync();
+
+    Q_EMIT startup_ui_changed();
 }
 
 bool FrontendManager::get_autostart_enabled() {
@@ -238,6 +259,10 @@ void FrontendManager::set_autostart_enabled(bool value) {
 #endif
     }
 
+    // Write to config file
+    m_config_settings.writeEntry("autostart_enabled", m_autostart_enabled);
+    m_config->sync();
+
     Q_EMIT autostart_enabled_changed();
 }
 
@@ -250,11 +275,9 @@ void FrontendManager::set_virtual_surround_auto_enabled(bool value) {
         return;
     m_virtual_surround_auto_enabled = value;
 
-    if (m_virtual_surround_auto_enabled) {
-        // TODO:
-    } else {
-        // TODO:
-    }
+    // Write to config file
+    m_config_settings.writeEntry("virtual_surround_auto_enabled", m_virtual_surround_auto_enabled);
+    m_config->sync();
 
     Q_EMIT virtual_surround_auto_enabled_changed();
 }

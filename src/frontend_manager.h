@@ -27,7 +27,7 @@ class FrontendManager : public QObject {
     Q_PROPERTY(int hrirWavFileNameIndex READ get_hrir_wav_file_name_index WRITE set_hrir_wav_file_name_index NOTIFY hrir_wav_file_name_index_changed)
 
     // The selected startup setting
-    Q_PROPERTY(QString startupSetting READ get_startup_setting WRITE set_startup_setting NOTIFY startup_setting_changed)
+    Q_PROPERTY(QString startupUi READ get_startup_ui WRITE set_startup_ui NOTIFY startup_ui_changed)
     // Whether autostart is enabled or not
     Q_PROPERTY(bool autostartEnabled READ get_autostart_enabled WRITE set_autostart_enabled NOTIFY autostart_enabled_changed)
     // Whether virtual surround sound is enabled automatically or not
@@ -57,9 +57,9 @@ class FrontendManager : public QObject {
     // Open folder in default file explorer
     Q_INVOKABLE void open_hrir_wav_folder();
 
-    QString get_startup_setting() const;
-    void set_startup_setting(const QString &value);
-    Q_SIGNAL void startup_setting_changed();
+    QString get_startup_ui() const;
+    void set_startup_ui(const QString &value);
+    Q_SIGNAL void startup_ui_changed();
 
     bool get_autostart_enabled();
     void set_autostart_enabled(bool value);
@@ -75,12 +75,13 @@ class FrontendManager : public QObject {
     QStringList m_hrir_wav_file_names;
     QStringList m_hrir_wav_file_paths;
     int m_hrir_wav_file_name_index = 0;
-    QString m_startup_setting = QStringLiteral("default");
+    QString m_startup_ui;
     bool m_autostart_enabled = false;
     bool m_virtual_surround_auto_enabled = false;
 
     PipeWireManager *m_pipewire_manager;
     KConfig *m_config;
+    KConfigGroup m_config_settings;
 
     QString hrir_wav_subpath = QStringLiteral("/hrir_wav");
 

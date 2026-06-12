@@ -30,18 +30,14 @@ FormCard.FormCardPage {
         }
 
         FormCard.FormComboBoxDelegate {
-            id: startupSetting
+            id: startupUi
             text: i18nc("@label:combobox", "Application behavior")
-            description: i18nc("@info:description", "How the application should start and run.")
+            description: i18nc("@info:description", "How the application should start and run.<br>Restart the program to apply.")
             displayMode: FormCard.FormComboBoxDelegate.ComboBox
             editable: false
             textRole: "label"
             valueRole: "key"
             model: [
-                {
-                    label: i18nc("@option", "Default"),
-                    key: "default"
-                },
                 {
                     label: i18nc("@option", "Show system tray icon"),
                     key: "showTray"
@@ -49,10 +45,14 @@ FormCard.FormCardPage {
                 {
                     label: i18nc("@option", "Show system tray icon & hide window"),
                     key: "showTrayHideWindow"
+                },
+                                {
+                    label: i18nc("@option", "Hide system tray icon"),
+                    key: "hideTray"
                 }
             ]
-            Component.onCompleted: currentIndex = indexOfValue(frontendManager.startupSetting)
-            onCurrentTextChanged: frontendManager.startupSetting = currentText
+            Component.onCompleted: currentIndex = indexOfValue(frontendManager.startupUi)
+            onCurrentValueChanged: frontendManager.startupUi = currentValue
         }
     }
 }

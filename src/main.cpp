@@ -118,15 +118,22 @@ int main(int argc, char *argv[]) {
     // Create PipeWire and frontend manager
     PipeWireManager pipewire_manager;
     KConfig config(QStringLiteral("virtual-surround-manager"));
+    KConfigGroup config_settings = config.group(QStringLiteral("Settings"));
     FrontendManager *frontend_manager = new FrontendManager(&pipewire_manager, &config);
 
     // Create TrayIcon and expose to QML
     auto tray_icon = new TrayIcon(&app);
     tray_icon->set_frontend_manager(frontend_manager);
     tray_icon->setup(QStringLiteral("de.berny23.virtual_surround_manager"));
+    tray_icon->update_toggle_action_state();
 
-    // Connect the virtual_surround_enabled_changed signal to update the tray icon state
+    // Set tray icon visibility depending on user setting
+    tray_icon->set_visibility(config_settings.readEntry("startup_ui", QString()) != QStringLiteral("hideTray"));
+
+    // Connect some frontend manager signals for updating the tray icon ui state
     QObject::connect(frontend_manager, &FrontendManager::virtual_surround_enabled_changed, tray_icon, &TrayIcon::update_toggle_action_state);
+    // QObject::connect(frontend_manager, &FrontendManager::hrir_wav_file_names_changed, tray_icon, &TrayIcon::update_profile_menu);
+    QObject::connect(frontend_manager, &FrontendManager::hrir_wav_file_name_index_changed, tray_icon, &TrayIcon::update_profile_menu);
 
     // Add main page and supply context
     QQmlApplicationEngine engine;
@@ -144,6 +151,9 @@ int main(int argc, char *argv[]) {
     if (auto *main_window = qobject_cast<QQuickWindow *>(root_object)) {
         tray_icon->set_main_window(main_window);
     }
+
+    if (config_settings.readEntry("startup_ui", QString()) == QStringLiteral("showTrayHideWindow"))
+        tray_icon->hide_main_window();
 
     // Show GUI
     return app.exec();

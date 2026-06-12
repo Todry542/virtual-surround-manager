@@ -17,12 +17,15 @@ Kirigami.ApplicationWindow {
     // Intercept close event to minimize to tray instead of quitting
     // This prevents the application from exiting when the user closes the window
     onClosing: event => {
-        event.accepted = false;
-        
-        // Minimize to system tray instead of quitting
-        // Only attempt if trayIcon is available and properly initialized
-        if (trayIcon !== null && trayIcon.hide_main_window !== undefined) {
-            trayIcon.hide_main_window();
+        // Only intercept if tray icon is visible, to prevent being unable to close app after changing tray icon setting from hidden to visible
+        if (trayIcon.is_visible()) {
+            event.accepted = false;
+
+            // Minimize to system tray instead of quitting
+            // Only attempt if trayIcon is available and properly initialized
+            if (trayIcon !== null && trayIcon.hide_main_window !== undefined) {
+                trayIcon.hide_main_window();
+            }
         }
     }
 

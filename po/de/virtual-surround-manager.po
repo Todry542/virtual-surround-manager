@@ -54,12 +54,8 @@ msgid "Application behavior"
 msgstr "Anwendungsverhalten"
 
 msgctxt "@info:description"
-msgid "How the application should start and run."
-msgstr "Wie die Anwendung gestartet und ausgeführt werden soll."
-
-msgctxt "@option"
-msgid "Default"
-msgstr "Standard"
+msgid "How the application should start and run.<br>Restart the program to apply."
+msgstr "Wie die Anwendung gestartet und ausgeführt werden soll.<br>Starten Sie das Programm zum Anwenden neu."
 
 msgctxt "@option"
 msgid "Show system tray icon"
@@ -68,6 +64,10 @@ msgstr "Zeige Kontrollleistensymbol"
 msgctxt "@option"
 msgid "Show system tray icon & hide window"
 msgstr "Zeige Kontrollleistensymbol & verstecke Fenster"
+
+msgctxt "@option"
+msgid "Hide system tray icon"
+msgstr "Verstecke Kontrollleistensymbol"
 
 # === About page ===
 
