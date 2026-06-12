@@ -243,14 +243,25 @@ void FrontendManager::set_autostart_enabled(bool value) {
     if (m_autostart_enabled) {
 #ifdef IS_APPIMAGE
         // TODO: Copy desktop file from APPDIR path and replace the exec line with the path from the env variable APPIMAGE
-        source = QStringLiteral("/usr/share/applications/de.berny23.virtual_surround_manager.desktop");
-
-        QFile::copy(source, destination);
+        // source = QStringLiteral("/usr/share/applications/de.berny23.virtual_surround_manager.desktop");
+        source = qEnvironmentVariable("APPDIR") + QStringLiteral("/de.berny23.virtual_surround_manager.desktop");
 #endif
 
-#if !defined(IS_FLATPAK) && !defined(IS_APPIMAGE)
+#if !defined(IS_FLATPAK)
         // Native or AppImage: Just copy the desktop file to the user's autostart folder (e. g. ~/.config/autostart)
         QFile::copy(source, destination);
+        qDebug("set_autostart_enabled: Copied desktop file from '%s' to '%s'", source.toStdString().c_str(), destination.toStdString().c_str());
+#endif
+#ifdef IS_APPIMAGE
+        // Replace "Exec=virtual-surround-manager" with full path to AppImage
+        QFile file(destination);
+        if (file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+            QString content = QTextStream(&file).readAll();
+            content.replace(QStringLiteral("Exec=virtual-surround-manager"), QStringLiteral("Exec=") + qEnvironmentVariable("APPIMAGE"));
+            file.seek(0);
+            file.resize(0);
+            QTextStream(&file) << content;
+        }
 #endif
     } else {
 #if !defined(IS_FLATPAK)

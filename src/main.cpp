@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     // Credits
     KAboutData aboutData(QStringLiteral("virtual-surround-manager"),
                          i18nc("@title", "Virtual Surround Sound"),
-                         QStringLiteral("1.0"),
+                         QStringLiteral("1.1"),
                          i18nc("@title:window", "Virtual Surround Sound Manager"),
                          KAboutLicense::MIT,
                          QStringLiteral("© 2026, Berny23"));
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
     // Add about page
     qmlRegisterSingletonType("de.berny23.virtual_surround_manager",
                              1,
-                             0,
+                             1,
                              "About",
                              [](QQmlEngine *engine, QJSEngine *) -> QJSValue {
                                  return engine->toScriptValue(KAboutData::applicationData());

@@ -41,6 +41,16 @@
 </description>
 
 <releases>
+  <release version="1.1.0" date="2026-06-12">
+    <description>
+      <ul>
+        <li>System tray icon, so you can keep the app in the background</li>
+        <li>Setting for auto-enabling virtual surround sound on app startup</li>
+        <li>Setting for autostarting the app</li>
+        <li>Setting for showing or hiding the tray icon</li>
+      </ul>
+    </description>
+  </release>
   <release version="1.0.0" date="2026-04-24">
     <description>
       <p>Initial release of the app.</p>
